@@ -1,0 +1,16 @@
+.form {
+  margin: auto;
+  margin-top: 2rem;
+  width: 50%;
+  padding: 10px;
+  background-color: #eee;
+}
+
+.label {
+  font-size: large;
+  font-style: bold;
+}
+
+.primary-button {
+  margin-bottom: 1rem;
+}
