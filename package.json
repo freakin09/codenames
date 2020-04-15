@@ -11,6 +11,8 @@
     "run:server": "cd ./packages/api && yarn start",
     "build:client": "cd ./packages/web && yarn run build",
     "build:common": "cd ./packages/common && yarn run build",
-    "build:server": "cd ./packages/api && yarn run build"
+    "build:server": "cd ./packages/api && yarn run build",
+    "build": "yarn build:common",
+    "start": "yarn run:server"
   }
 }
