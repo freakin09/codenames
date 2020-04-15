@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
-import { MuiThemeProvider } from "material-ui/styles";
-
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
@@ -37,22 +35,20 @@ class App extends Component<IProps, {}> {
     return (
       <>
         <Home />
-        <MuiThemeProvider>
-          <Snackbar
-            open={!!this.store.game.error}
-            autoHideDuration={10000}
+        <Snackbar
+          open={!!this.store.game.error}
+          autoHideDuration={10000}
+          onClose={this.handleErrorClose}
+        >
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            severity="error"
             onClose={this.handleErrorClose}
           >
-            <MuiAlert
-              elevation={6}
-              variant="filled"
-              severity="error"
-              onClose={this.handleErrorClose}
-            >
-              {this.store.game.error}
-            </MuiAlert>
-          </Snackbar>
-        </MuiThemeProvider>
+            {this.store.game.error}
+          </MuiAlert>
+        </Snackbar>
       </>
     );
   }

@@ -190,7 +190,11 @@ class Store implements IStore {
 
   private initializeStore() {
     this.gameInfo = {};
-    this.userInfo = { ...this.userInfo, gameId: undefined };
+    this.userInfo = {
+      ...this.userInfo,
+      isSpymMaster: false,
+      gameId: undefined,
+    };
   }
 
   private subscribeToNotifications = (

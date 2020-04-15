@@ -14,8 +14,10 @@ import {
 } from "@codenames/common";
 import * as io from "socket.io-client";
 
-const connection = "http://localhost:4500/";
-
+const ifDevelopment = process.env.NODE_ENV === "development";
+const connection = ifDevelopment
+  ? "http://localhost:4500/"
+  : document.location.protocol + "//" + document.location.host;
 const ioClient: SocketIOClient.Socket = io.connect(connection, {
   timeout: 200000,
 });

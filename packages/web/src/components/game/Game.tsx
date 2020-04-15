@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
-import { MuiThemeProvider } from "material-ui/styles";
-
 import { IStore } from "../../stores/IStore";
 
 import GameGrid from "../game_grid/GameGrid";
@@ -67,22 +65,20 @@ class Game extends Component<IProps, {}> {
           </Col>
         </Row>
 
-        <MuiThemeProvider>
-          <Snackbar
-            open={this.store.newNotification}
-            autoHideDuration={6000}
+        <Snackbar
+          open={this.store.newNotification}
+          autoHideDuration={6000}
+          onClose={this.handleSnackbarClose}
+        >
+          <MuiAlert
             onClose={this.handleSnackbarClose}
+            elevation={6}
+            variant="filled"
+            severity="info"
           >
-            <MuiAlert
-              onClose={this.handleSnackbarClose}
-              elevation={6}
-              variant="filled"
-              severity="info"
-            >
-              {this.store.notification}
-            </MuiAlert>
-          </Snackbar>
-        </MuiThemeProvider>
+            {this.store.notification}
+          </MuiAlert>
+        </Snackbar>
       </>
     );
   }
