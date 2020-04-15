@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/static/css/main.79023026.chunk.css",
+    "main.js": "/static/js/main.fe59554b.chunk.js",
+    "main.js.map": "/static/js/main.fe59554b.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.449446f3.js",
+    "runtime-main.js.map": "/static/js/runtime-main.449446f3.js.map",
+    "static/css/2.d6146218.chunk.css": "/static/css/2.d6146218.chunk.css",
+    "static/js/2.29d8ab55.chunk.js": "/static/js/2.29d8ab55.chunk.js",
+    "static/js/2.29d8ab55.chunk.js.map": "/static/js/2.29d8ab55.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.ab26982fcf48bef53327b3277fadb66d.js": "/precache-manifest.ab26982fcf48bef53327b3277fadb66d.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.d6146218.chunk.css.map": "/static/css/2.d6146218.chunk.css.map",
+    "static/css/main.79023026.chunk.css.map": "/static/css/main.79023026.chunk.css.map",
+    "static/js/2.29d8ab55.chunk.js.LICENSE.txt": "/static/js/2.29d8ab55.chunk.js.LICENSE.txt",
+    "static/media/assasin.jpg": "/static/media/assasin.60a0e58c.jpg",
+    "static/media/blue.jpeg": "/static/media/blue.a91846a9.jpeg",
+    "static/media/semantic.min.css": "/static/media/outline-icons.ef60a4f6.woff",
+    "static/media/civilian.jpg": "/static/media/civilian.75a5f2bf.jpg",
+    "static/media/default.jpg": "/static/media/default.20a5c089.jpg",
+    "static/media/red.jpeg": "/static/media/red.e34ad243.jpeg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.449446f3.js",
+    "static/css/2.d6146218.chunk.css",
+    "static/js/2.29d8ab55.chunk.js",
+    "static/css/main.79023026.chunk.css",
+    "static/js/main.fe59554b.chunk.js"
+  ]
+}
