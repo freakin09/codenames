@@ -55,7 +55,9 @@ export class GameCore {
   public onCreateGame(socket: SocketIO.Socket, playerId: string, cb: Function) {
     try {
       const creator: Player = Player.retrievePlayer(playerId);
-      const game = new Game([creator]);
+      const game = new Game();
+
+      game.addPlayer(creator);
       game.saveGame();
 
       socket.join(game.gameId);

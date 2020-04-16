@@ -31,7 +31,7 @@ export class Player implements IPlayer {
   }
 
   public joinGame(gameId: string) {
-    this.gameId = this.gameId;
+    this.gameId = gameId;
   }
 
   public leaveGame() {
@@ -40,7 +40,7 @@ export class Player implements IPlayer {
   }
 
   public makeSpyMaster() {
-    if (this.gameId === null) {
+    if (!this.gameId) {
       throw new Error("Player needs to belong to game to be spymaster");
     }
 

@@ -50,11 +50,23 @@ export class InMemoryStore {
    * @param gameId The game id.
    */
   public fetchGame(gameId: string): IGame {
-    return this.store[gameId];
+    const game = this.store[gameId];
+
+    if (!game) {
+      throw new Error("Cannot find Game");
+    }
+
+    return game;
   }
 
   public fetchPlayer(playerId: string): IPlayer {
-    return this.store[playerId];
+    const player = this.store[playerId];
+
+    if (!player) {
+      throw new Error("Cannot find player");
+    }
+
+    return player;
   }
 
   /**

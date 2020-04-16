@@ -29,9 +29,9 @@ export class Game implements IGame {
 
   MAX_NUM_SPYMASTER = 2;
 
-  constructor(players: IPlayer[]) {
+  constructor() {
     this.id = getUniqueId();
-    this.players = players;
+    this.players = [];
     this.chosenCards = [];
     this.spyMasters = [];
     this.status = GameStatus.New;
