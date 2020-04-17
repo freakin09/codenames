@@ -70,8 +70,6 @@ export class SocketServer {
   ) {
     const { payload = {} } = request;
 
-    console.log(`Got request: ${request.operation}`);
-
     switch (request.operation) {
       case MESSAGES.ping:
         cb(null, MESSAGES.pong);

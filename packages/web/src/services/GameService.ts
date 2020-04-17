@@ -32,9 +32,9 @@ class GameService {
   ) {
     ioClient.on("data", this.subscribeToNotifications);
 
-    // setInterval(() => {
-    //   this.ping().then(() => "");
-    // }, 10000);
+    setInterval(() => {
+      this.ping().then(() => "");
+    }, 30000);
   }
 
   /**
