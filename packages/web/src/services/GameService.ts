@@ -11,6 +11,7 @@ import {
   chooseWordPayload,
   chooseSpyMasterPayload,
   leaveGamePayload,
+  replayGamePayload,
 } from "@codenames/common";
 import * as io from "socket.io-client";
 
@@ -75,6 +76,10 @@ class GameService {
 
   public leaveGame(gameId: string, playerId: string): Promise<any> {
     return this.sendRequest(leaveGamePayload(gameId, playerId));
+  }
+
+  public replayGame(gameId: string, playerId: string): Promise<any> {
+    return this.sendRequest(replayGamePayload(gameId, playerId));
   }
 
   /**

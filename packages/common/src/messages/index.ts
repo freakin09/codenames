@@ -12,6 +12,7 @@ export const MESSAGES = {
   createGame: "CREATE_GAME",
   startGame: "START_GAME",
   leaveGame: "LEAVE_GAME",
+  replayGame: "REPLAY_GAME",
 
   chooseWord: "CHOOSE_WORD",
   chooseSpyMaster: "CHOOSE_SPY_MASTER",

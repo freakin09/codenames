@@ -8,6 +8,7 @@ import {
   StartGameRequestPayload,
   ChooseSpyMasterRequestPayload,
   LeaveGameRequestPayload,
+  ReplayGameRequestPayload,
 } from "@codenames/common";
 import { GameCore } from "./GameCore";
 import { LoggerService } from "../services/LoggerService";
@@ -108,6 +109,11 @@ export class SocketServer {
       case MESSAGES.leaveGame:
         const leaveGameRequest = payload as LeaveGameRequestPayload;
         await this.gameCore.onPlayerLeaveGame(socket, leaveGameRequest, cb);
+        break;
+
+      case MESSAGES.replayGame:
+        const replayGameRequest = payload as ReplayGameRequestPayload;
+        await this.gameCore.onReplayGame(replayGameRequest, cb);
         break;
 
       default:

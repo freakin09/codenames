@@ -35,6 +35,10 @@ export const leaveGamePayload = (gameId: string, playerId: string) => {
   return { operation: MESSAGES.leaveGame, payload: { gameId, playerId } };
 };
 
+export const replayGamePayload = (gameId: string, playerId: string) => {
+  return { operation: MESSAGES.replayGame, payload: { gameId, playerId } };
+};
+
 export const pingPayload = () => {
   return { operation: MESSAGES.ping, payload: { ping: "ping" } };
 };

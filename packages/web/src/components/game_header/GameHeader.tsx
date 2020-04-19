@@ -3,6 +3,8 @@ import { inject, observer } from "mobx-react";
 
 import { Message, Segment } from "semantic-ui-react";
 
+import { GameStatus } from "@codenames/common";
+
 import { IStore } from "../../stores/IStore";
 
 interface IProps {
@@ -28,11 +30,23 @@ class GameHeader extends Component<IProps, {}> {
     this.store.leaveGame();
   };
 
+  onReplayGame = () => {
+    this.store.replayGame();
+  };
+
   render() {
     return (
       <div>
         <Message as="h4" attached="top">
           Menu
+          {this.store.game.status === GameStatus.Over && (
+            <input
+              type="button"
+              value="Start New Game"
+              style={{ float: "right" }}
+              onClick={this.onReplayGame}
+            />
+          )}
           <input
             type="button"
             value="Leave Game"

@@ -7,3 +7,4 @@ export * from "./JoinGameRequestPayload";
 export * from "./ChooseSpyMasterRequestPayload";
 export * from "./StartGameRequestPayload";
 export * from "./LeaveGameRequestPayload";
+export * from "./ReplayGameRequestPayload";

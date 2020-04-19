@@ -21,6 +21,7 @@ export interface IStore {
   joinGame(gameId: string): Promise<any>;
   startGame(): Promise<any>;
   leaveGame(): Promise<any>;
+  replayGame(): Promise<any>;
 
   leaveGame(): void;
 

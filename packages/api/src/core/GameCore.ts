@@ -5,6 +5,7 @@ import {
   ChooseWordRequestPayload,
   ChooseSpyMasterRequestPayload,
   LeaveGameRequestPayload,
+  ReplayGameRequestPayload,
 } from "@codenames/common";
 
 import { IPlayer } from "./models/IPlayer";
@@ -190,6 +191,30 @@ export class GameCore {
     }
   }
 
+  public onReplayGame(req: ReplayGameRequestPayload, cb: Function) {
+    try {
+      const existingGame: Game = Game.retrieveGame(req.gameId);
+      const newGame: Game = new Game();
+
+      existingGame.gamePlayers.forEach((player) => {
+        newGame.addPlayer(player);
+        const socket = this.ioServer.sockets.connected[player.socketId];
+
+        socket.leave(existingGame.gameId);
+        socket.join(newGame.gameId);
+      });
+
+      newGame.saveGame();
+
+      this.sendNewGameCreated(newGame.gameId);
+
+      this.sendPlayersInfo(newGame.gameId, newGame.gamePlayers);
+      this.sendGameNotification(newGame.gameId, `New Game Created!`);
+    } catch (error) {
+      cb(null, errorResponse(RESPONSE_CODES.failed, error.message));
+    }
+  }
+
   public onPlayerLeaveGame(
     socket: SocketIO.Socket,
     req: LeaveGameRequestPayload,
@@ -246,6 +271,13 @@ export class GameCore {
    */
   private sendGameOver(gameId: string, gameOverReason: string) {
     const payload: GameActionResponse = Payloads.sendGameOver(gameOverReason);
+    const response = successResponse(RESPONSE_CODES.gameNotification, payload);
+
+    this.ioServer.to(gameId).emit("data", response);
+  }
+
+  private sendNewGameCreated(gameId: string) {
+    const payload: GameActionResponse = Payloads.sendNewGameCreated(gameId);
     const response = successResponse(RESPONSE_CODES.gameNotification, payload);
 
     this.ioServer.to(gameId).emit("data", response);

@@ -184,6 +184,22 @@ class Store implements IStore {
     }
   }
 
+  public async replayGame() {
+    if (!this.gameInfo.id) {
+      throw new Error("Need to join game first");
+    }
+
+    if (!this.user.id) {
+      throw new Error("Need to login first");
+    }
+
+    try {
+      this.gameService.replayGame(this.gameInfo.id, this.user.id);
+    } catch (error) {
+      this.gameInfo.error = error;
+    }
+  }
+
   public setNotification(text: string) {
     this.notificationText = text;
   }

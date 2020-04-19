@@ -74,12 +74,12 @@ export class Payloads {
    * Forms reponse to notify new game is created
    * @param reason The reason to abort the game.
    */
-  public static sendNewGameCreated(gameId: gameId): common.GameActionResponse {
+  public static sendNewGameCreated(gameId: string): common.GameActionResponse {
     const data: common.INewGameCreated = {
       gameId,
     };
     return {
-      action: common.MESSAGES.gameAborted,
+      action: common.MESSAGES.newGameCreated,
       data,
     };
   }
