@@ -13,7 +13,6 @@ import { Payloads } from "./payloads";
 import { ICard } from "./models/ICard";
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { IGame } from "./models/IGame";
 
 /**
  * Game :- A main class that manages all the game actions/logics.
@@ -55,7 +54,7 @@ export class GameCore {
   public onCreateGame(socket: SocketIO.Socket, playerId: string, cb: Function) {
     try {
       const creator: Player = Player.retrievePlayer(playerId);
-      const game = new Game();
+      const game: Game = new Game();
 
       game.addPlayer(creator);
       game.saveGame();
@@ -112,7 +111,7 @@ export class GameCore {
    */
   public onStartGame(gameId: string, cb: Function) {
     try {
-      const game = Game.retrieveGame(gameId);
+      const game: Game = Game.retrieveGame(gameId);
 
       if (game == null) {
         throw new Error("Could not find game");
@@ -134,23 +133,28 @@ export class GameCore {
    */
   public onChooseWord(req: ChooseWordRequestPayload, cb: Function) {
     try {
-      const { word, gameId } = req;
-      const game = Game.retrieveGame(gameId);
+      const { word, gameId, playerId } = req;
+
+      const game: Game = Game.retrieveGame(gameId);
+      const player: Player = Player.retrievePlayer(playerId);
 
       if (game == null) {
         throw new Error("Game ID is not valid");
       }
 
-      const chosenCard = game.chooseWord(word);
+      const isGameAlreadyOver = game.isGameOver();
+
+      const chosenCard = game.chooseWord(player, word);
       game.saveGame();
 
       this.sendCardInfo(gameId, chosenCard);
 
-      if (game.isGameOver()) {
-        this.sendGameOver(game.gameId);
+      // choosing the word ended the game
+      if (!isGameAlreadyOver && game.isGameOver()) {
+        this.sendGameOver(game.gameId, game.gameOverReason);
       }
 
-      this.sendGameNotification(gameId, `${word} was chosen!`);
+      this.sendGameNotification(gameId, `${player.name} chose ${word} !`);
     } catch (error) {
       cb(null, errorResponse(RESPONSE_CODES.failed, error.message));
     }
@@ -159,8 +163,8 @@ export class GameCore {
   public onChooseSpymaster(req: ChooseSpyMasterRequestPayload, cb: Function) {
     try {
       const { playerId, gameId } = req;
-      const game = Game.retrieveGame(gameId);
-      const player = Player.retrievePlayer(playerId);
+      const game: Game = Game.retrieveGame(gameId);
+      const player: Player = Player.retrievePlayer(playerId);
 
       if (game == null) {
         throw new Error("Game ID is not valid");
@@ -193,8 +197,8 @@ export class GameCore {
   ) {
     try {
       const { playerId, gameId } = req;
-      const game = Game.retrieveGame(gameId);
-      const player = Player.retrievePlayer(playerId);
+      const game: Game = Game.retrieveGame(gameId);
+      const player: Player = Player.retrievePlayer(playerId);
 
       if (game == null) {
         throw new Error("Game ID is not valid");
@@ -240,8 +244,8 @@ export class GameCore {
    * Sends the message to all players with winner team.
    * @param currentGameIns The game instance
    */
-  private sendGameOver(gameId: string) {
-    const payload: GameActionResponse = Payloads.sendGameOver();
+  private sendGameOver(gameId: string, gameOverReason: string) {
+    const payload: GameActionResponse = Payloads.sendGameOver(gameOverReason);
     const response = successResponse(RESPONSE_CODES.gameNotification, payload);
 
     this.ioServer.to(gameId).emit("data", response);

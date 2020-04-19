@@ -19,6 +19,7 @@ export const MESSAGES = {
   playAgain: "PLAY_AGAIN",
   gameOver: "GAME_OVER",
   gameAborted: "GAME_ABORTED",
+  newGameCreated: "NEW_GAME_CREATED",
   gameNotification: "GAME_NOTIFICATION",
 
   words: "WORDS",

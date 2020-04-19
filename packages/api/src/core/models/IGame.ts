@@ -9,6 +9,7 @@ export interface IGame {
   gameWords: string[];
   gamePlayers: IPlayer[];
   winnerTeam?: string;
+  gameOverReason: string;
 
   addPlayer(player: IPlayer): void;
 
@@ -17,6 +18,6 @@ export interface IGame {
   isGameNew(): boolean;
   isGameOver(): boolean;
 
-  chooseWord(word: string): ICard;
+  chooseWord(player: IPlayer, word: string): ICard;
   addSpyMaster(player: IPlayer): void;
 }

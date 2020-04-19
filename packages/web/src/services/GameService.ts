@@ -61,8 +61,12 @@ class GameService {
     return this.sendRequest(startGamePayload(gameId));
   }
 
-  public chooseWord(gameId: string, word: string): Promise<any> {
-    return this.sendRequest(chooseWordPayload(gameId, word));
+  public chooseWord(
+    gameId: string,
+    playerId: string,
+    word: string
+  ): Promise<any> {
+    return this.sendRequest(chooseWordPayload(gameId, playerId, word));
   }
 
   public chooseSpyMaster(gameId: string, playerId: string): Promise<any> {

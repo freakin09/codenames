@@ -23,7 +23,7 @@ export interface ICard {
  * Game over response model.
  */
 export interface IGameOver {
-  winnerId: string;
+  reason: string;
 }
 
 /**
@@ -35,6 +35,10 @@ export interface IGameAborted {
 
 export interface IGameNotification {
   notification: string;
+}
+
+export interface INewGameCreated {
+  gameId: string;
 }
 
 /**

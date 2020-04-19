@@ -16,8 +16,15 @@ export const startGamePayload = (gameId: string) => {
   return { operation: MESSAGES.startGame, payload: { gameId } };
 };
 
-export const chooseWordPayload = (gameId: string, word: string) => {
-  return { operation: MESSAGES.chooseWord, payload: { gameId, word } };
+export const chooseWordPayload = (
+  gameId: string,
+  playerId: string,
+  word: string
+) => {
+  return {
+    operation: MESSAGES.chooseWord,
+    payload: { gameId, playerId, word },
+  };
 };
 
 export const chooseSpyMasterPayload = (gameId: string, playerId: string) => {

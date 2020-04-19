@@ -1,26 +1,31 @@
 {
   "files": {
-    "main.css": "/static/css/main.1ece8c52.chunk.css",
-    "main.js": "/static/js/main.f9dd261f.chunk.js",
-    "main.js.map": "/static/js/main.f9dd261f.chunk.js.map",
+    "main.css": "/static/css/main.79023026.chunk.css",
+    "main.js": "/static/js/main.78303052.chunk.js",
+    "main.js.map": "/static/js/main.78303052.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.449446f3.js",
     "runtime-main.js.map": "/static/js/runtime-main.449446f3.js.map",
-    "static/css/2.6ab0818e.chunk.css": "/static/css/2.6ab0818e.chunk.css",
-    "static/js/2.210f4107.chunk.js": "/static/js/2.210f4107.chunk.js",
-    "static/js/2.210f4107.chunk.js.map": "/static/js/2.210f4107.chunk.js.map",
+    "static/css/2.7e8cb023.chunk.css": "/static/css/2.7e8cb023.chunk.css",
+    "static/js/2.7ed5729b.chunk.js": "/static/js/2.7ed5729b.chunk.js",
+    "static/js/2.7ed5729b.chunk.js.map": "/static/js/2.7ed5729b.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.a19a9c10c17cb844ea17fb8ced98cb4f.js": "/precache-manifest.a19a9c10c17cb844ea17fb8ced98cb4f.js",
+    "precache-manifest.ca6b278455d04435bd0d905f1a0d8bf5.js": "/precache-manifest.ca6b278455d04435bd0d905f1a0d8bf5.js",
     "service-worker.js": "/service-worker.js",
-    "static/css/2.6ab0818e.chunk.css.map": "/static/css/2.6ab0818e.chunk.css.map",
-    "static/css/main.1ece8c52.chunk.css.map": "/static/css/main.1ece8c52.chunk.css.map",
-    "static/js/2.210f4107.chunk.js.LICENSE.txt": "/static/js/2.210f4107.chunk.js.LICENSE.txt",
-    "static/media/semantic.min.css": "/static/media/outline-icons.ef60a4f6.woff"
+    "static/css/2.7e8cb023.chunk.css.map": "/static/css/2.7e8cb023.chunk.css.map",
+    "static/css/main.79023026.chunk.css.map": "/static/css/main.79023026.chunk.css.map",
+    "static/js/2.7ed5729b.chunk.js.LICENSE.txt": "/static/js/2.7ed5729b.chunk.js.LICENSE.txt",
+    "static/media/assasin.jpg": "/static/media/assasin.60a0e58c.jpg",
+    "static/media/blue.jpeg": "/static/media/blue.a91846a9.jpeg",
+    "static/media/semantic.min.css": "/static/media/outline-icons.ef60a4f6.woff",
+    "static/media/civilian.jpg": "/static/media/civilian.75a5f2bf.jpg",
+    "static/media/default.jpg": "/static/media/default.20a5c089.jpg",
+    "static/media/red.jpeg": "/static/media/red.e34ad243.jpeg"
   },
   "entrypoints": [
     "static/js/runtime-main.449446f3.js",
-    "static/css/2.6ab0818e.chunk.css",
-    "static/js/2.210f4107.chunk.js",
-    "static/css/main.1ece8c52.chunk.css",
-    "static/js/main.f9dd261f.chunk.js"
+    "static/css/2.7e8cb023.chunk.css",
+    "static/js/2.7ed5729b.chunk.js",
+    "static/css/main.79023026.chunk.css",
+    "static/js/main.78303052.chunk.js"
   ]
 }

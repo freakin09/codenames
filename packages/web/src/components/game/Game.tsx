@@ -7,6 +7,13 @@ import GameGrid from "../game_grid/GameGrid";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
 import { Row, Col } from "react-bootstrap";
 
 import { GameStatus } from "@codenames/common";
@@ -32,11 +39,11 @@ class Game extends Component<IProps, {}> {
     this.store.clearNotifications();
   };
 
+  handleDialogClose = () => {
+    this.store.clearGameOverReason();
+  };
+
   onCardClick = (word: string) => {
-    if (this.store.user.isSpymMaster) {
-      this.store.setNotification("Spy Master cannot choose card");
-      return;
-    }
     this.store.chooseWord(word);
   };
 
@@ -79,6 +86,30 @@ class Game extends Component<IProps, {}> {
             {this.store.notification}
           </MuiAlert>
         </Snackbar>
+
+        <Dialog
+          open={
+            this.store.game.status === GameStatus.Over &&
+            !!this.store.game.gameOverReason
+          }
+          onClose={this.handleDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          fullWidth={true}
+          maxWidth="sm"
+        >
+          <DialogTitle id="alert-dialog-title">{"Game Over!"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {this.store.game.gameOverReason}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleDialogClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </>
     );
   }

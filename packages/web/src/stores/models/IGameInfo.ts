@@ -10,4 +10,5 @@ export interface IGame {
   players?: string[];
   isConnected?: boolean;
   spyMasters?: string[];
+  gameOverReason?: string;
 }

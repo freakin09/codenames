@@ -13,6 +13,7 @@ export interface IStore {
   chooseWord(word: string): Promise<any>;
   chooseSpyMaster(): Promise<any>;
   clearNotifications(): void;
+  clearGameOverReason(): void;
 
   setNotification(text: string): void;
 

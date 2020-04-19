@@ -21,6 +21,7 @@ export class Game implements IGame {
 
   public status: GameStatus;
   public winnerTeam?: string;
+  public gameOverReason: string;
 
   NUM_CARDS = 25;
   NUM_BLACK_CARDS = 1;
@@ -35,6 +36,7 @@ export class Game implements IGame {
     this.chosenCards = [];
     this.spyMasters = [];
     this.status = GameStatus.New;
+    this.gameOverReason = "";
   }
 
   static retrieveGame(gameId: string): Game {
@@ -113,11 +115,15 @@ export class Game implements IGame {
   /**
    * Updates the strike by updating the turn, adding the drop details.
    */
-  public chooseWord(word: string): ICard {
+  public chooseWord(player: IPlayer, word: string): ICard {
     const chosenCard = this.cards.find((wordInfo) => wordInfo.word === word);
 
     if (!chosenCard || this.chosenCards.includes(chosenCard)) {
       throw new Error("Cannot choose this word");
+    }
+
+    if (this.spyMasters.includes(player)) {
+      throw new Error("Spy master cannot choose card");
     }
 
     this.chosenCards.push(chosenCard);
@@ -127,18 +133,22 @@ export class Game implements IGame {
 
     // check if game is over
     if (chosenCard.type === CardType.Assasin) {
+      this.status = GameStatus.Over;
+      this.gameOverReason = `${player.name} chose the assasin card!`;
     } else if (
       chosenCard.type === CardType.Blue &&
       difference(blueTeamCards, this.chosenCards).length === 0
     ) {
       this.winnerTeam = "Blue";
-      this.status === GameStatus.Over;
+      this.status = GameStatus.Over;
+      this.gameOverReason = `Blue Team Won!`;
     } else if (
       chosenCard.type === CardType.Red &&
       difference(redTeamCards, this.chosenCards).length === 0
     ) {
       this.winnerTeam = "Red";
-      this.status === GameStatus.Over;
+      this.status = GameStatus.Over;
+      this.gameOverReason = `Red Team Won!`;
     }
 
     return chosenCard;

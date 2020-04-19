@@ -34,10 +34,14 @@ export class Payloads {
    * Forms reponse to notify the game has over.
    * @param winnerId The winner id.
    */
-  public static sendGameOver(): common.GameActionResponse {
+  public static sendGameOver(reason: string): common.GameActionResponse {
+    const data: common.IGameOver = {
+      reason,
+    };
+
     return {
       action: common.MESSAGES.gameOver,
-      data: {},
+      data,
     };
   }
 
@@ -59,6 +63,20 @@ export class Payloads {
   public static sendGameAborted(reason: string): common.GameActionResponse {
     const data: common.IGameAborted = {
       reason,
+    };
+    return {
+      action: common.MESSAGES.gameAborted,
+      data,
+    };
+  }
+
+  /**
+   * Forms reponse to notify new game is created
+   * @param reason The reason to abort the game.
+   */
+  public static sendNewGameCreated(gameId: gameId): common.GameActionResponse {
+    const data: common.INewGameCreated = {
+      gameId,
     };
     return {
       action: common.MESSAGES.gameAborted,

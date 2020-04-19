@@ -127,8 +127,16 @@ class Store implements IStore {
       throw new Error("Need to join game first");
     }
 
+    if (this.userInfo.id == null) {
+      throw new Error("Login first");
+    }
+
     try {
-      await this.gameService.chooseWord(this.gameInfo.id, word);
+      await this.gameService.chooseWord(
+        this.gameInfo.id,
+        this.userInfo.id,
+        word
+      );
     } catch (error) {
       this.gameInfo.error = error;
     }
@@ -188,6 +196,10 @@ class Store implements IStore {
     this.gameInfo.error = "";
   }
 
+  public clearGameOverReason() {
+    this.gameInfo.gameOverReason = "";
+  }
+
   private initializeStore() {
     this.gameInfo = {};
     this.userInfo = {
@@ -200,8 +212,6 @@ class Store implements IStore {
   private subscribeToNotifications = (
     response: common.SuccessResponse | common.ErrorResponse
   ) => {
-    console.log(`Got response: ${response}`);
-
     const error = (response as common.ErrorResponse).message;
 
     if (error) {
@@ -265,6 +275,18 @@ class Store implements IStore {
         this.gameInfo.error =
           (data as common.IGameAborted).reason ||
           "Ooops Something went wrong. Sorry for the incovenience";
+        break;
+
+      case common.MESSAGES.gameOver:
+        this.gameInfo.status = GameStatus.Over;
+        this.gameInfo.gameOverReason =
+          (data as common.IGameOver).reason || "The game is over !";
+        break;
+
+      case common.MESSAGES.newGameCreated:
+        const gameId = (data as common.INewGameCreated).gameId;
+        this.gameInfo = { id: gameId, status: GameStatus.New };
+        this.userInfo.gameId = gameId;
         break;
 
       default:

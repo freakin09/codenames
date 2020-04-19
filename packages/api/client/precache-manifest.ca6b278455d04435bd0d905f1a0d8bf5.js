@@ -1,31 +1,39 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "d7a67c657b4aa23696975260e19eb842",
+    "revision": "b75382266b244d9468a71db7831a22df",
     "url": "/index.html"
   },
   {
-    "revision": "393eb812b9e19a4d158c",
-    "url": "/static/css/2.6ab0818e.chunk.css"
+    "revision": "4714403b91cdec3aaa4f",
+    "url": "/static/css/2.7e8cb023.chunk.css"
   },
   {
-    "revision": "983fd35f711fcc7849f2",
-    "url": "/static/css/main.1ece8c52.chunk.css"
+    "revision": "535c49b069563c0bab9b",
+    "url": "/static/css/main.79023026.chunk.css"
   },
   {
-    "revision": "393eb812b9e19a4d158c",
-    "url": "/static/js/2.210f4107.chunk.js"
+    "revision": "4714403b91cdec3aaa4f",
+    "url": "/static/js/2.7ed5729b.chunk.js"
   },
   {
-    "revision": "785bbe88819383b002b59cb3a8f7cee0",
-    "url": "/static/js/2.210f4107.chunk.js.LICENSE.txt"
+    "revision": "d0342f4d57f0870a5fa6e5ade1c23d90",
+    "url": "/static/js/2.7ed5729b.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "983fd35f711fcc7849f2",
-    "url": "/static/js/main.f9dd261f.chunk.js"
+    "revision": "535c49b069563c0bab9b",
+    "url": "/static/js/main.78303052.chunk.js"
   },
   {
     "revision": "807207d44f4f8917e5d6",
     "url": "/static/js/runtime-main.449446f3.js"
+  },
+  {
+    "revision": "60a0e58cc31746bfcbf5f81f77b948af",
+    "url": "/static/media/assasin.60a0e58c.jpg"
+  },
+  {
+    "revision": "a91846a91facfccb290015fcbec42587",
+    "url": "/static/media/blue.a91846a9.jpeg"
   },
   {
     "revision": "13db00b7a34fee4d819ab7f9838cc428",
@@ -46,6 +54,14 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "e8c322de9658cbeb8a774b6624167c2c",
     "url": "/static/media/brand-icons.e8c322de.woff2"
+  },
+  {
+    "revision": "75a5f2bfc16c0354f52164a4e165c168",
+    "url": "/static/media/civilian.75a5f2bf.jpg"
+  },
+  {
+    "revision": "20a5c089a492be5017f8a8d831325537",
+    "url": "/static/media/default.20a5c089.jpg"
   },
   {
     "revision": "9c74e172f87984c48ddf5c8108cabe67",
@@ -90,5 +106,9 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "ef60a4f6c25ef7f39f2d25a748dbecfe",
     "url": "/static/media/outline-icons.ef60a4f6.woff"
+  },
+  {
+    "revision": "e34ad243242a0423f760b6b65848a125",
+    "url": "/static/media/red.e34ad243.jpeg"
   }
 ]);
