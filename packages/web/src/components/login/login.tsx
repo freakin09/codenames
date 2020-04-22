@@ -33,7 +33,7 @@ class Login extends Component<IProps, IState> {
 
   render() {
     return (
-      <Form className="form">
+      <Form className="form" onSubmit={this.onSubmit}>
         <Form.Group controlId="formPlaintextEmail">
           <Form.Label className="label">Name</Form.Label>
           <Form.Control
@@ -60,6 +60,11 @@ class Login extends Component<IProps, IState> {
   private handleChange(event: any) {
     this.setState({ name: event.target.value } as IState);
   }
+
+  private onSubmit = (event: any) => {
+    event.preventDefault();
+    this.onSignIn();
+  };
 
   private onSignIn = async () => {
     await this.store.signIn(this.state.name);
