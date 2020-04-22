@@ -302,7 +302,11 @@ class Store implements IStore {
       case common.MESSAGES.newGameCreated:
         const gameId = (data as common.INewGameCreated).gameId;
         this.gameInfo = { id: gameId, status: GameStatus.New };
-        this.userInfo.gameId = gameId;
+        this.userInfo = {
+          ...this.userInfo,
+          isSpymMaster: false,
+          gameId: gameId,
+        };
         break;
 
       default:
