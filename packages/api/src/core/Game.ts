@@ -128,8 +128,12 @@ export class Game implements IGame {
 
     this.chosenCards.push(chosenCard);
 
-    const blueTeamCards = this.cards.map((card) => card.type === CardType.Blue);
-    const redTeamCards = this.cards.map((card) => card.type === CardType.Red);
+    const blueTeamCards = this.cards.filter(
+      (card) => card.type === CardType.Blue
+    );
+    const redTeamCards = this.cards.filter(
+      (card) => card.type === CardType.Red
+    );
 
     // check if game is over
     if (chosenCard.type === CardType.Assasin) {
