@@ -28,10 +28,17 @@ class Card extends Component<IProps, {}> {
   render() {
     const { card } = this.props;
 
+    let cardStyle = { width: "11rem" };
+    if (card.type !== undefined && !card.chosen) {
+      cardStyle["boxShadow"] = `0 0 2rem ${this.cardHighlightColour(card)}`;
+      cardStyle["border"] = `0.5rem solid ${this.cardHighlightColour(card)}`;
+      cardStyle["borderRadius"] = "5px";
+    }
+
     return (
       <BootstrapCard
         onClick={() => this.onClick(card.word)}
-        style={{ width: "11rem" }}
+        style={cardStyle}
         key={card.word}
       >
         <BootstrapCard.Img
@@ -44,6 +51,22 @@ class Card extends Component<IProps, {}> {
         </BootstrapCard.Body>
       </BootstrapCard>
     );
+  }
+
+  private cardHighlightColour(card: ICard): string {
+    switch (card.type) {
+      case CardType.Assasin:
+        return "#000000";
+      case CardType.Blue:
+        return "#0000FF";
+      case CardType.Red:
+        return "#FF0000";
+      case CardType.Civilian:
+        return "#E1C699";
+      default:
+        console.log("should not hit this");
+        return "#FFFFFF";
+    }
   }
 
   private cardImage(card: ICard): string {
