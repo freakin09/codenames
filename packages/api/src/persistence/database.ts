@@ -12,7 +12,7 @@ export class Database {
    */
   private static ins: Database = new Database();
 
-  private dbUrl: string = "mongodb://localhost/";
+  private dbUrl: string = process.env.MONGODB_URI || "mongodb://localhost/";
   private mongoClient: MongoClient;
   private db: Db;
 
