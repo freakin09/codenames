@@ -22,8 +22,6 @@ export class GameCore {
   /**
    * Initializes a new instance of the class Game.
    * @param ioServer The ioServer instance.
-   * @param socket The socket instance.
-   * @param gameId The game id.
    */
   constructor(private ioServer: SocketIO.Server) {}
 
@@ -255,11 +253,7 @@ export class GameCore {
         throw new Error("Cannot find");
       }
 
-      game.removePlayer(player);
-      await game.saveGame();
-      await player.save();
-
-      socket.leave(gameId);
+      await this.removePlayerFromGame(game, player);
 
       if (game.isGameAborted) {
         await this.abortGame(game);
@@ -268,6 +262,17 @@ export class GameCore {
       this.sendGameNotification(gameId, `${player.name} has left the game :'`);
     } catch (error) {
       cb(null, errorResponse(RESPONSE_CODES.failed, error.message));
+    }
+  }
+
+  private async removePlayerFromGame(game: Game, player: Player) {
+    game.removePlayer(player);
+    await game.saveGame();
+    await player.save();
+
+    const socket = this.ioServer.sockets.connected[player.socketId];
+    if (!!socket) {
+      socket.leave(game.gameId);
     }
   }
 
@@ -282,12 +287,14 @@ export class GameCore {
       "The players disconnected from the game. So we aborted the game. Please create or join a new room"
     );
 
-    //TODO: update each remaining players game id
-
     const response = successResponse(RESPONSE_CODES.gameNotification, payload);
     this.ioServer.to(game.gameId).emit("data", response);
 
-    // TODO: disconnect all sockets
+    // cleanup
+    const existingPlayers = await game.gamePlayers;
+    existingPlayers.forEach(async (player) => {
+      await this.removePlayerFromGame(game, <Player>player);
+    });
   }
 
   /**
