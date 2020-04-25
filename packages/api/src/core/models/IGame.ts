@@ -7,7 +7,8 @@ import { ICard } from "./ICard";
 export interface IGame {
   gameId: string;
   gameWords: string[];
-  gamePlayers: IPlayer[];
+  gamePlayers: Promise<IPlayer[]>;
+  gameSpyMasters: Promise<IPlayer[]>;
   winnerTeam?: string;
   gameOverReason: string;
 

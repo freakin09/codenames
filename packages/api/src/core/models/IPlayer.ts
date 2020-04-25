@@ -6,6 +6,7 @@ export interface IPlayer {
   name: string;
   gameId?: string;
   isSpyMaster: boolean;
+  playerId: string;
 
   save(): void;
   delete(): void;

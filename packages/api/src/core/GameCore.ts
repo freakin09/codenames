@@ -36,15 +36,16 @@ export class GameCore {
    * Note: Here we need to get the socket instance everytime and can't be stored as intance
    * variable because we are adding the socket to room (game id).
    */
-  public onLogin(socket: SocketIO.Socket, playerName: string, cb: Function) {
+  public async onLogin(
+    socket: SocketIO.Socket,
+    playerName: string,
+    cb: Function
+  ) {
     try {
       this.checkValidityAndThrowIfInValid(playerName);
 
       const player: Player = new Player(socket.id, playerName);
-      player.save();
-
-      // TODO: what does this even do
-      // (socket as any).gameInfo = player;
+      await player.save();
 
       cb(null, successResponse(RESPONSE_CODES.loginSuccess, player));
     } catch (error) {
@@ -52,31 +53,39 @@ export class GameCore {
     }
   }
 
-  public onCreateGame(socket: SocketIO.Socket, playerId: string, cb: Function) {
+  public async onCreateGame(
+    socket: SocketIO.Socket,
+    playerId: string,
+    cb: Function
+  ) {
     try {
-      const creator: Player = Player.retrievePlayer(playerId);
+      const creator: Player = await Player.retrievePlayer(playerId);
       const game: Game = new Game();
 
       game.addPlayer(creator);
-      game.saveGame();
+      await game.saveGame();
+      await creator.save();
 
       socket.join(game.gameId);
 
-      cb(null, successResponse(RESPONSE_CODES.success, this.gameInfo(game)));
+      cb(
+        null,
+        successResponse(RESPONSE_CODES.success, await this.gameInfo(game))
+      );
     } catch (error) {
       cb(null, errorResponse(RESPONSE_CODES.failed, error.message));
     }
   }
 
-  public onJoinGame(
+  public async onJoinGame(
     socket: SocketIO.Socket,
     joinGameRequestPayload: JoinGameRequestPayload,
     cb: Function
   ) {
     try {
       const { gameId, playerId } = joinGameRequestPayload;
-      const game: Game = Game.retrieveGame(gameId);
-      const player: Player = Player.retrievePlayer(playerId);
+      const game: Game = await Game.retrieveGame(gameId);
+      const player: Player = await Player.retrievePlayer(playerId);
 
       if (game == null) {
         throw new Error("Game ID is not valid");
@@ -93,13 +102,18 @@ export class GameCore {
       }
 
       game.addPlayer(player);
-      game.saveGame();
+
+      await game.saveGame();
+      await player.save();
 
       socket.join(gameId);
 
-      cb(null, successResponse(RESPONSE_CODES.success, this.gameInfo(game)));
+      cb(
+        null,
+        successResponse(RESPONSE_CODES.success, await this.gameInfo(game))
+      );
 
-      this.sendPlayersInfo(gameId, game.gamePlayers);
+      this.sendPlayersInfo(gameId, await game.gamePlayers);
       this.sendGameNotification(gameId, `${player.name} has joined the game!`);
     } catch (error) {
       cb(null, errorResponse(RESPONSE_CODES.failed, error.message));
@@ -110,16 +124,16 @@ export class GameCore {
    * Starts the game.
    * @param gameId The game id.
    */
-  public onStartGame(gameId: string, cb: Function) {
+  public async onStartGame(gameId: string, cb: Function) {
     try {
-      const game: Game = Game.retrieveGame(gameId);
+      const game: Game = await Game.retrieveGame(gameId);
 
       if (game == null) {
         throw new Error("Could not find game");
       }
 
       game.startGame();
-      game.saveGame();
+      await game.saveGame();
 
       this.sendWords(gameId, game.gameWords);
       this.sendGameNotification(gameId, "Game Started");
@@ -132,12 +146,12 @@ export class GameCore {
    * The event handles on the card drop of a player.
    * @param req The dropCardRequest.
    */
-  public onChooseWord(req: ChooseWordRequestPayload, cb: Function) {
+  public async onChooseWord(req: ChooseWordRequestPayload, cb: Function) {
     try {
       const { word, gameId, playerId } = req;
 
-      const game: Game = Game.retrieveGame(gameId);
-      const player: Player = Player.retrievePlayer(playerId);
+      const game: Game = await Game.retrieveGame(gameId);
+      const player: Player = await Player.retrievePlayer(playerId);
 
       if (game == null) {
         throw new Error("Game ID is not valid");
@@ -146,7 +160,7 @@ export class GameCore {
       const isGameAlreadyOver = game.isGameOver();
 
       const chosenCard = game.chooseWord(player, word);
-      game.saveGame();
+      await game.saveGame();
 
       this.sendCardInfo(gameId, chosenCard);
 
@@ -161,11 +175,14 @@ export class GameCore {
     }
   }
 
-  public onChooseSpymaster(req: ChooseSpyMasterRequestPayload, cb: Function) {
+  public async onChooseSpymaster(
+    req: ChooseSpyMasterRequestPayload,
+    cb: Function
+  ) {
     try {
       const { playerId, gameId } = req;
-      const game: Game = Game.retrieveGame(gameId);
-      const player: Player = Player.retrievePlayer(playerId);
+      const game: Game = await Game.retrieveGame(gameId);
+      const player: Player = await Player.retrievePlayer(playerId);
 
       if (game == null) {
         throw new Error("Game ID is not valid");
@@ -176,9 +193,10 @@ export class GameCore {
       }
 
       game.addSpyMaster(player);
-      game.saveGame();
+      await game.saveGame();
+      await player.save();
 
-      this.sendSpyMastersInfo(game.gameId, game.gameSpyMasters);
+      this.sendSpyMastersInfo(game.gameId, await game.gameSpyMasters);
 
       cb(
         null,
@@ -191,12 +209,13 @@ export class GameCore {
     }
   }
 
-  public onReplayGame(req: ReplayGameRequestPayload, cb: Function) {
+  public async onReplayGame(req: ReplayGameRequestPayload, cb: Function) {
     try {
-      const existingGame: Game = Game.retrieveGame(req.gameId);
+      const existingGame: Game = await Game.retrieveGame(req.gameId);
       const newGame: Game = new Game();
 
-      existingGame.gamePlayers.forEach((player) => {
+      const existingPlayers = await existingGame.gamePlayers;
+      existingPlayers.forEach((player) => {
         newGame.addPlayer(player);
         const socket = this.ioServer.sockets.connected[player.socketId];
 
@@ -204,26 +223,29 @@ export class GameCore {
         socket.join(newGame.gameId);
       });
 
-      newGame.saveGame();
+      await newGame.saveGame();
+      await existingPlayers.forEach(async (player) => await player.save());
+
+      await existingGame.deleteGame();
 
       this.sendNewGameCreated(newGame.gameId);
 
-      this.sendPlayersInfo(newGame.gameId, newGame.gamePlayers);
+      this.sendPlayersInfo(newGame.gameId, await newGame.gamePlayers);
       this.sendGameNotification(newGame.gameId, `New Game Created!`);
     } catch (error) {
       cb(null, errorResponse(RESPONSE_CODES.failed, error.message));
     }
   }
 
-  public onPlayerLeaveGame(
+  public async onPlayerLeaveGame(
     socket: SocketIO.Socket,
     req: LeaveGameRequestPayload,
     cb: Function
   ) {
     try {
       const { playerId, gameId } = req;
-      const game: Game = Game.retrieveGame(gameId);
-      const player: Player = Player.retrievePlayer(playerId);
+      const game: Game = await Game.retrieveGame(gameId);
+      const player: Player = await Player.retrievePlayer(playerId);
 
       if (game == null) {
         throw new Error("Game ID is not valid");
@@ -234,12 +256,13 @@ export class GameCore {
       }
 
       game.removePlayer(player);
-      game.saveGame();
+      await game.saveGame();
+      await player.save();
 
       socket.leave(gameId);
 
       if (game.isGameAborted) {
-        this.abortGame(game.gameId);
+        await this.abortGame(game);
       }
 
       this.sendGameNotification(gameId, `${player.name} has left the game :'`);
@@ -252,15 +275,17 @@ export class GameCore {
    * Abort the game
    * @param gameId The game id.
    */
-  private abortGame(gameId: string) {
-    Game.retrieveGame(gameId).deleteGame();
+  private async abortGame(game: Game) {
+    await game.deleteGame();
 
     const payload: GameActionResponse = Payloads.sendGameAborted(
       "The players disconnected from the game. So we aborted the game. Please create or join a new room"
     );
 
+    //TODO: update each remaining players game id
+
     const response = successResponse(RESPONSE_CODES.gameNotification, payload);
-    this.ioServer.to(gameId).emit("data", response);
+    this.ioServer.to(game.gameId).emit("data", response);
 
     // TODO: disconnect all sockets
   }
@@ -354,10 +379,14 @@ export class GameCore {
     }
   }
 
-  private gameInfo(game: Game) {
+  private async gameInfo(game: Game) {
+    const players = await game.gamePlayers;
+    const playerNames = players.map((player) => {
+      return player.name;
+    });
     return {
       id: game.gameId,
-      players: game.playerNames,
+      players: playerNames,
       status: game.status,
     };
   }

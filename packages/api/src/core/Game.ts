@@ -4,43 +4,97 @@ import { shuffle, sample, difference } from "underscore";
 import { ICard } from "./models/ICard";
 import { getUniqueId } from "../utils/misc";
 import { IPlayer } from "./models/IPlayer";
-import { InMemoryStore } from "../persistence/InMemoryStore";
 import { IGame } from "./models/IGame";
 
 import { wordList } from "../constants/word_list";
+
+import { Player } from "./Player";
+
+import { Database } from "../persistence/database";
+
+interface IGameData {
+  playerIds: string[];
+  cards: ICard[];
+  chosenCards: ICard[];
+  spyMasterIds: string[];
+  status: GameStatus;
+  winnerTeam?: string;
+  gameOverReason: string;
+}
 
 /**
  * The class which helps to handle each game session.
  */
 export class Game implements IGame {
   private id: string;
-  private players: IPlayer[];
+  private playerIds: string[];
   private cards: ICard[];
   private chosenCards: ICard[];
-  private spyMasters: IPlayer[];
+  private spyMasterIds: string[];
 
   public status: GameStatus;
   public winnerTeam?: string;
   public gameOverReason: string;
 
-  NUM_CARDS = 25;
-  NUM_BLACK_CARDS = 1;
-  NUM_CIVILIAN_CARDS = 9;
-  MAX_NUM_TEAM_CARDS = 8;
+  static NUM_CARDS = 25;
+  static NUM_BLACK_CARDS = 1;
+  static NUM_CIVILIAN_CARDS = 9;
+  static MAX_NUM_TEAM_CARDS = 8;
 
-  MAX_NUM_SPYMASTER = 2;
+  static MAX_NUM_SPYMASTER = 2;
 
   constructor() {
     this.id = getUniqueId();
-    this.players = [];
+    this.playerIds = [];
+    this.cards = [];
     this.chosenCards = [];
-    this.spyMasters = [];
+    this.spyMasterIds = [];
     this.status = GameStatus.New;
     this.gameOverReason = "";
   }
 
-  static retrieveGame(gameId: string): Game {
-    return <Game>InMemoryStore.instance.fetchGame(gameId);
+  static async retrieveGame(gameId: string): Promise<Game> {
+    const gameData = <IGameData>(
+      (<unknown>await Database.instance.fetchGame(gameId))
+    );
+
+    let game = new Game();
+    game.initializeFromData(gameId, gameData);
+
+    return game;
+  }
+
+  public async saveGame() {
+    Database.instance.saveGame(this.gameId, this.dataToSave());
+  }
+
+  public async deleteGame() {
+    Database.instance.deleteGame(this.gameId);
+  }
+
+  private initializeFromData(id: string, gameData: IGameData): Game {
+    this.id = id;
+    this.playerIds = gameData.playerIds;
+    this.cards = gameData.cards;
+    this.chosenCards = gameData.chosenCards;
+    this.spyMasterIds = gameData.spyMasterIds;
+    this.status = gameData.status;
+    this.gameOverReason = gameData.gameOverReason;
+    this.winnerTeam = gameData.winnerTeam;
+
+    return this;
+  }
+
+  private dataToSave(): IGameData {
+    return {
+      playerIds: [...this.playerIds],
+      cards: [...this.cards],
+      chosenCards: [...this.cards],
+      spyMasterIds: [...this.spyMasterIds],
+      status: this.status,
+      winnerTeam: this.winnerTeam,
+      gameOverReason: this.gameOverReason,
+    };
   }
 
   public startGame(): void {
@@ -49,28 +103,28 @@ export class Game implements IGame {
   }
 
   public addPlayer(player: IPlayer): void {
-    if (this.players.includes(player)) {
+    if (this.playerIds.includes(player.playerId)) {
       throw new Error("Player is already in the game");
     }
 
-    this.players.push(player);
+    this.playerIds.push(player.playerId);
 
     player.joinGame(this.id);
   }
 
   public removePlayer(player: IPlayer): void {
-    if (!this.players.includes(player)) {
+    if (!this.playerIds.includes(player.playerId)) {
       throw new Error("Player is not in the game");
     }
 
-    this.players.splice(this.players.indexOf(player), 1);
+    this.playerIds.splice(this.playerIds.indexOf(player.playerId), 1);
 
-    const spymasterIndex = this.spyMasters.indexOf(player);
+    const spymasterIndex = this.spyMasterIds.indexOf(player.playerId);
     if (spymasterIndex > -1) {
-      this.spyMasters.splice(spymasterIndex, 1);
+      this.spyMasterIds.splice(spymasterIndex, 1);
     }
 
-    if (this.players.length < 2) {
+    if (this.playerIds.length < 2) {
       this.status = GameStatus.Aborted;
     }
 
@@ -88,16 +142,20 @@ export class Game implements IGame {
     return this.id;
   }
 
-  public get gamePlayers(): IPlayer[] {
-    return [...this.players];
+  public get gamePlayers(): Promise<IPlayer[]> {
+    const playersPromises = this.playerIds.map((id) => {
+      return Player.retrievePlayer(id);
+    });
+
+    return Promise.all(playersPromises);
   }
 
-  public get playerNames(): string[] {
-    return this.players.map((player) => player.name);
-  }
+  public get gameSpyMasters(): Promise<IPlayer[]> {
+    const playerPromises = this.spyMasterIds.map((id) => {
+      return Player.retrievePlayer(id);
+    });
 
-  public get gameSpyMasters(): IPlayer[] {
-    return [...this.spyMasters];
+    return Promise.all(playerPromises);
   }
 
   public isGameNew(): boolean {
@@ -122,7 +180,7 @@ export class Game implements IGame {
       throw new Error("Cannot choose this word");
     }
 
-    if (this.spyMasters.includes(player)) {
+    if (this.spyMasterIds.includes(player.playerId)) {
       throw new Error("Spy master cannot choose card");
     }
 
@@ -159,51 +217,39 @@ export class Game implements IGame {
   }
 
   public addSpyMaster(player: IPlayer) {
-    if (!this.players.includes(player)) {
-      throw new Error("Player must belong to gabe to be spy master");
+    if (!this.playerIds.includes(player.playerId)) {
+      throw new Error("Player must belong to game to be spy master");
     }
 
     if (this.status !== GameStatus.InProgress) {
       throw new Error("Game is not in progress yet");
     }
 
-    if (this.spyMasters.includes(player)) {
+    if (this.spyMasterIds.includes(player.playerId)) {
       throw new Error("Already a spy master");
     }
 
-    if (this.spyMasters.length < this.MAX_NUM_SPYMASTER) {
+    if (this.spyMasterIds.length < Game.MAX_NUM_SPYMASTER) {
       player.makeSpyMaster();
-      this.spyMasters.push(player);
+      this.spyMasterIds.push(player.playerId);
       return;
     }
 
     throw new Error(
-      `Cannot have more than ${this.MAX_NUM_SPYMASTER} spy masters`
+      `Cannot have more than ${Game.MAX_NUM_SPYMASTER} spy masters`
     );
   }
 
   public spyMasterCards(player: IPlayer): ICard[] {
-    if (!this.spyMasters.includes(player)) {
+    if (!this.spyMasterIds.includes(player.playerId)) {
       throw new Error("Player is not a spymaster");
     }
 
     return [...this.cards];
   }
 
-  /**
-   * Saves the game details to the redis store.
-   */
-  public saveGame() {
-    this.players.forEach((player) => player.save());
-    InMemoryStore.instance.saveGame(this.gameId, this);
-  }
-
-  public deleteGame() {
-    InMemoryStore.instance.deleteGame(this.gameId);
-  }
-
   private generateGameCards(): ICard[] {
-    const words = sample(wordList, this.NUM_CARDS);
+    const words = sample(wordList, Game.NUM_CARDS);
 
     // create cards from words
     const teamCardTypes = [CardType.Blue, CardType.Red];
@@ -213,15 +259,15 @@ export class Game implements IGame {
     const cards = words.map((word, index) => {
       let cardType;
 
-      const non_team_cards = this.NUM_CIVILIAN_CARDS + this.NUM_BLACK_CARDS;
+      const non_team_cards = Game.NUM_CIVILIAN_CARDS + Game.NUM_BLACK_CARDS;
 
-      if (index < this.NUM_BLACK_CARDS) {
+      if (index < Game.NUM_BLACK_CARDS) {
         cardType = CardType.Assasin;
-      } else if (this.NUM_BLACK_CARDS <= index && index < non_team_cards) {
+      } else if (Game.NUM_BLACK_CARDS <= index && index < non_team_cards) {
         cardType = CardType.Civilian;
       } else if (
         non_team_cards <= index &&
-        index < non_team_cards + this.MAX_NUM_TEAM_CARDS
+        index < non_team_cards + Game.MAX_NUM_TEAM_CARDS
       ) {
         cardType = cardTypeWithMore;
       } else {

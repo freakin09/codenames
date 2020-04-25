@@ -69,9 +69,7 @@ class Store implements IStore {
       this.setUserInfo(player);
       this.userInfo.isSignedIn = true;
     } catch (error) {
-      console.log(this.gameInfo.error);
       this.gameInfo.error = error;
-      console.log(this.gameInfo.error);
     }
   }
 
