@@ -13,6 +13,7 @@ export class Database {
   private static ins: Database = new Database();
 
   private dbUrl: string = process.env.MONGODB_URI || "mongodb://localhost/";
+  private dbName: string = process.env.DATABASE_NAME || "codenames";
   private mongoClient: MongoClient;
   private db: Db;
 
@@ -29,7 +30,7 @@ export class Database {
       }
 
       this.mongoClient = client;
-      this.db = client.db("codenames");
+      this.db = client.db(this.dbName);
     });
   }
 

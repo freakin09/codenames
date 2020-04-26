@@ -47,7 +47,6 @@ export class Player implements IPlayer {
    * Saves the game details to the redis store.
    */
   public async save() {
-    console.log("saving player");
     Database.instance.savePlayer(this.id, this.dataToSave());
   }
 
